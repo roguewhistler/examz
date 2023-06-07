@@ -1,0 +1,1168 @@
+% \iffalse meta-comment
+%
+% `examz' --- 2023/06/07 Version 1.0.0
+%
+% Copyright (C) 2023 by Christopher McClain
+% E-mail: christopher.mcclain@mail.wvu.edu
+% -----------------------------------------
+%
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any later
+% version. The latest version of this license is in:
+%
+%    http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2008 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{examz.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}
+%<class>\ProvidesClass{examz}
+%<*class>
+    [2023/06/07 v1.0.0 Randomized exams with multiple versions]
+%</class>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[numbered]{hypdoc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+   \DocInput{examz.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \changes{v1.0.0}{2023/06/07}{First public release}
+%
+% \GetFileInfo{examz.dtx}
+%
+% \DoNotIndex{\addtocounter,\arabic,\AtBeginDocument,\AtEndDocument,\begin,
+%             \BODY,\boolfalse,\booltrue,\chk@incompi,\clearcounterprefix,
+%             \Collect@Body,\counterprefix,\CurrentOption,\DeclareOption,
+%             \decr@latest@ques,\end,\endcoverpages,\find@latestques,\ifbool,
+%             \ifnumequal,\ifnumless,\ifnumodd,\ifrandomizectr,\input,
+%             \inputcountersfile,\LoadClass,\newbool,\newcommand,\newcounter,
+%             \NewEnviron,\newenvironment,\newpage,\noprintanswers,
+%             \norandomizectr,\notbool,\null,\opencountersfile,\parts,
+%             \PassOptionsToClass,\printanswers,\ProcessOptions,\question,
+%             \questions,\randomizectr,\refto@index,\relax,\renewcommand,
+%             \RequirePackage,\savecounter,\setcounter,\setcounterprefix,
+%             \setup@point@toks,\space,\subparts,\subsubparts,\thispagestyle,
+%             \typein,\typeout,\value,\whileboolexpr,\xpatchcmd,
+%             \xrandprovidecounter,\xvalue,\hrulefill,\makebox,\EnterResponse,
+%             \NumberOfVersions,\endinput}
+%
+% \title{^^A
+%   The \textsf{examz} class\thanks{^^A
+%     This file describes version \fileversion, last revised \filedate.^^A
+%   }^^A
+% }
+% \author{^^A
+%   Christopher McClain\thanks{E-mail: christopher.mcclain@mail.wvu.edu}^^A
+% }
+%
+% \date{Released \filedate}
+%
+% \maketitle
+%
+%\begin{abstract}
+% The \textsf{examz} document class builds on the \textsf{exam} document class
+% that was developed by Philip S. Hirschhorn. An author may use the class
+% exactly as the \textsf{exam} class, but there are also additional features.
+% The document class facilitates the writing of questions with random elements,
+% the creation of multiple versions of an exam, and the use of separate files
+% as question banks. 
+%\end{abstract}
+%
+%\tableofcontents
+%
+%\section{Introduction}
+%
+%\subsection{About}
+%
+% Since 1994, Philip Hirschhorn's \textsf{exam} document class has provided
+% authors and educators with a framework for writing exams that is both highly
+% customizable and easy to use. The \textsf{examz} document class loads the
+% \textsf{exam} class and adds some more features. Most of these new features
+% require the \textsf{counterz} package.
+%
+% First of all, the \textsf{examz} class may be loaded with new options that
+% facilitate the use of commands from the \textsf{counterz} package for writing
+% questions with random elements. Second, a new \textsf{versions} environment
+% allows for the creation of multiple versions of an exam in the same document,
+% alternating between exams and solutions, if desired. Third, the command
+% \cs{question} may now be replaced by the command \cs{questionfrombank} which
+% allows for random selection of questions from a user-defined question bank.
+% Finally, a few simple macros make it even easier to modify the customized
+% content in headers, footers, and special pages when creating new exams from
+% previous documents.
+%
+% Some commands in \textsf{exam} have been patched in order to distinctly label
+% the questions in different exam versions and their solutions (so that \LaTeX{}
+% issues no warnings about multiply-defined labels). The optional environment
+% \textsf{coverpages} has also been patched for two-sided documents so that the
+% subsequent odd arabic numerals always appear on the front pages.
+%
+%\subsection{License}
+%
+% Copyright \copyright\ 2023 Christopher McClain. This software may be copied,
+% distributed, and/or modified under the %terms of the
+% \href{https://www.latex-project.org/lppl/}{LaTeX Project Public License},
+% either version 1.3c of this license or any later version.
+%
+%\subsection{Installation}
+%
+% Run \LaTeX{} on examz.ins to generate the file examz.cls, and copy it to
+% your local texmf directory. Run (pdf)\LaTeX{} on examz.dtx to generate the
+% documentation examz.pdf. Typesetting the documentation requires the package
+% \textsf{hypdoc} which is included in \TeX\ distributions and at
+% \href{http://www.ctan.org} {The Comprehensive TeX Archive Network}.
+%
+%\section{User Guide}
+%
+% To use this document class, begin your document with the following line:
+%
+%\begin{verbatim}
+%\documentclass{examz}
+%\end{verbatim}
+%
+% \noindent
+% This document class loads the \textsf{exam} class and admits the options for
+% that class. See the documentation for the \textsf{exam} class for details. The
+% \textsf{examz} class also admits the additional options \textsf{randomize},
+% \textsf{norandomize}, \textsf{prompt}, and \textsf{complete}, all of which are
+% discussed in this guide. This document class requires the \textsf{counterz}
+% package, which is available at \href{http://www.ctan.org}
+% {The Comprehensive TeX Archive Network}.
+%
+% In addition to its parent class \textsf{exam} and the \textsf{counterz}
+% package, the \textsf{examz} class requires the following packages:
+% \textsf{xparse}, \textsf{environ}, \textsf{etoolbox}, and \textsf{makecmds}
+% (the latter two via \textsf{counterz}), all of which are included in most
+% standard \TeX\ distributions and at \href{http://www.ctan.org}{The
+% Comprehensive TeX Archive Network}.
+%
+%\subsection{Randomized Exams}\label{usr:versions}
+%
+% The \textsf{examz} class loads the \textsf{counterz} package which provides
+% commands for generating, saving, recalling, manipulating, and displaying
+% random values for counters. These commands may be incorporated into questions
+% to generate random exams. The process of saving and recalling counters may be 
+% explicitly coded in the document, as described in the \textsf{counterz}
+% package documentation, but the \textsf{examz} class may instead be loaded with
+% options to automate this process.
+%
+% Loading the class with the option \textsf{randomize} will execute the commands
+% \cs{randomizectr} and \cs{opencountersfile} from the \textsf{counterz}
+% package. Loading the class with the option \textsf{norandomize} will execute
+% the commands \cs{norandomizectr} and \cs{inputcountersfile}. If neither of
+% these options are loaded, the default behavior is that of the option
+% \textsf{randomize}. The reason for this is that if the document contains no
+% randomly generated counters then this default choice will have no effect
+% anyway, and if the document does contain randomly generated counters then the
+% first typesetting must generate these counter values.
+%
+% A third option \textsf{prompt} frees the user from the burden of manually
+% changing between \textsf{randomize} and \textsf{nonrandomize} and also
+% protects against accidental overwriting of previously generated counter
+% values. This option will execute the command \cs{promptrandomexam}, which
+% is an instance of the command \cs{promptrandomizectr} from the
+% \textsf{counterz} package, followed by one of the commands
+% \cs{opencountersfile} or \cs{inputcountersfile} as appropriate. The terminal
+% dialogue of \cs{promptrandomexam} can be changed with the use of
+% \cs{renewcommand}, if desired. (See Section \ref{imp} for the implementation
+% of \cs{promptrandomexam}.) There are additional effects from this option with
+% regard to the \textsf{versions} environment, described below.
+% 
+% \DescribeEnv{versions}
+% The \textsf{versions} environment uses a loop and a counter \textit{version}
+% to generate versions of the exam, incrementing the counter and updating the
+% page numbers along the way. The version number may be displayed in headers or
+% elsewhere with either \cs{theversion} or \cs{arabic}\{version\}. The
+% environment takes an optional argument: the number of desired versions, with
+% 1 being the default value. The environment is used as follows:
+%
+%\begin{verbatim}
+%\begin{versions}[<optional number>]
+%   <exam content here>
+%\end{versions}
+%\end{verbatim}
+%
+%\noindent
+% where \textit{exam content} refers to the \textsf{questions} environment (as
+% defined in the \textsf{exam} package), cover pages, and anything else after
+% \cs{begin}\{document\} that is intended to appear in the exam. When the class
+% is randomized with the option \textsf{prompt}, the number provided by the
+% optional argument is not used, and so there is no reason to include it.
+% Instead, a command \cs{promptversions} inputs the number of versions using a
+% terminal dialogue. (The dialogue can be changed by using \cs{renewcommand},
+% if desired. See Section \ref{imp:versions} for the implementation of
+% \cs{promptversions}.) When the exam is not randomized, the number of versions
+% is inputted from the previously generated counters file, and so the prompt
+% does not appear.
+%
+% Recall that the \textsf{examz} class inherits the options \textsf{answers}
+% and \textsf{noanswers} from the \textsf{exam} class. The \textsf{examz} class
+% also has an additional option called \textsf{complete}. When loaded with this
+% option, the document alternately prints without and with solutions. (Note:
+% This feature only takes effect when using the \textsf{versions} environment.)
+% Moreover, when the class is loaded with the option \textsf{twoside} (inherited
+% from its grandparent class \textsf{article}), an extra blank page is inserted
+% at the end of each exam when necessary to ensure that the next exam starts on
+% a front page. An exam that begins with the line
+%
+%\begin{verbatim}
+%\documentclass{11pt,twoside,addpoints,prompt,complete}
+%\end{verbatim}
+%
+%\noindent
+% and uses the \textsf{versions} environment, for example, will ask the user
+% whether to randomize, and if so, how many versions to print. Then the typeset
+% document will include the requested number of versions, alternating between
+% exams and solutions, with correct grade tables and no warnings about
+% multiply-defined labels, and an extra blank page whenever an exam has an odd
+% number of pages.
+%
+%\subsection{Question Banks}\label{usr:banks}
+%
+% Within the \textsf{questions} environment, the \textsf{examz} package offers
+% an alternative to the command \cs{question} that allows for the random
+% selection of a question from a question bank. The command
+% \DescribeMacro{\questionfrombank}
+% \cs{questionfrombank}\oarg{points}\marg{filename} has two arguments, the first
+% of which is optional. The first (optional) argument is the point value of the
+% question, just as with the command \cs{question} from the \textsf{exam} class.
+% The second argument is the name of a \TeX{} file (without the .tex extension).
+% The second argument may include a path. Suppose, for example, that the
+% directory which contains the main exam document \textsf{Test1.tex} also
+% contains a subdirectory named \textsf{Problems} containing the files
+% \textsf{Solve\_Linear\_Equation.tex} and \textsf{State\_Capitals.tex}. Then
+% the code
+%
+%
+%\begin{verbatim}
+%\documentclass{examz}
+%\begin{document}
+%\begin{questions}
+%   \questionfrombank{Problems/Solve_Linear_Equation}
+%   \questionfrombank{Problems/State_Capitals}
+%\end{questions}
+%\end{document}
+%\end{verbatim}
+%
+%\noindent
+% generates an exam with two questions, one randomly selected from each of the
+% two specified files.
+%
+% When several files are contained in the same directory, the repetition of the
+% \DescribeMacro{\setquestionpath}
+% path name can be reduced by the command \cs{setquestionpath}\marg{path name},
+% as illustrated by the following code:
+%
+%\begin{verbatim}
+%\documentclass{examz}
+%\begin{document}
+%   \setquestionpath{Problems/}
+%\begin{questions}
+%   \questionfrombank{Solve_Linear_Equation}
+%   \questionfrombank{State_Capitals}
+%\end{questions}
+%\end{document}
+%\end{verbatim}
+%
+% \noindent
+% The command \cs{setquestionpath} can be used both inside and outside of the
+% \textsf{questions} environment, and can be used to change the path multiple
+% times, if desired.
+%
+% In order for a file to function as a question bank, it must conform to a
+% specific (but very simple) structure. First of all, every question bank file
+% begins with a command \cs{setnumberofquestions}\marg{number}. Second, all of
+% \DescribeMacro{\setnumberofquestions}
+% the questions are contained within a \textsf{questionbank} environment. Third,
+% each individual question is contained within a \textsf{qbitem} environment.
+% This structure is exhibited by the following code, which could be the entire
+% contents of a file \textsf{State\_Capitals.tex} inputted by the command \cs{questionfrombank}:
+%
+%\begin{verbatim}
+%\setnumberofquestions{2}
+%\begin{questionbank}
+%\begin{qbitem}{1}
+%   What is the capital of Maine?
+%\end{qbitem}
+%\begin{qbitem}{2}
+%   What is the capital of Nebraska?
+%\end{qbitem}
+%\end{questionbank}
+%\end{verbatim}
+%
+% \DescribeEnv{questionbank}
+% The \textsf{questionbank} environment randomly generates an integer between 1
+% and the number specified in the preceding command \cs{setnumberofquestions}.
+% Each instance of the environment \textsf{qbitem}\marg{item number} compares
+% \DescribeEnv{qbitem}
+% its numerical argument \meta{item number} to this randomly generated number
+% and executes the environment's body of content only if the numbers match. Then
+% the \textsf{questionbank} environment ends input so that nothing in the file
+% after that environment will be included. Note that neither environment
+% includes within its body the \cs{question} command; that command is already
+% part of the command \cs{questionfrombank} which inputs the file. Also note
+% that \cs{questionfrombank} sets the counter prefix to include the file name
+% and exam version number, so authors should use the prefix versions of counters
+% commands (e.g. \cs{xprovidecounter}, \cs{xarabic}, etc.) within
+% \textsf{qbitem} environments. (See the \textsf{counterz} documentation for
+% details.)
+%
+% The \textsf{qbitem} environment allows for the inclusion of the various
+% environments for parts and solutions that are provided by the \textsf{exam}
+% class. Recall that each of the six solutions environments admits an argument
+% to specify the amount of solution space. (The argument is optional for all
+% except \textsf{solutionbox}. See the \textsf{exam} documentation for details.)
+% The \textsf{examz} class offers a command \cs{setsolutionspace}\marg{length}
+% \DescribeMacro{\setsolutionspace} and six analogous solutions environments
+% that pass \meta{length} to their \textsf{exam} counterparts. For example, the
+% \DescribeEnv{qbsolution}
+% environment \textsf{qbsolution} is equivalent to the environment
+% \textsf{solution}\oarg{length}. The advantage of this is that the command
+% \cs{setsolutionspace}\marg{length} can be included once in the file, above the
+% \textsf{questionbank} environment, for example, and any subsequent adjustment
+% of the length can be done for all of the question bank items simultaneously
+% with a single edit rather than a comprehensive search and replace. Five other
+% environments \textsf{qbsolutionbox}, \textsf{qbsolutionorbox},
+% \DescribeEnv{qbsolutionbox}
+% \textsf{qbsolutionorlines}, \textsf{qbsolutionordottedlines}, and finally
+% \DescribeEnv{qbsolutionorbox}
+% \textsf{qbsolutionorgrid} are similar analogues of the other \textsf{exam}
+% class solutions environments. Just as their \textsf{exam} counterparts, these
+% \DescribeEnv{qbsolutionorlines}
+% environments can also be used within the \textsf{parts} environment. The
+% \DescribeEnv{qbsolutionordottedlines}
+% command \cs{setsolutionspace} may be used multiple times in the same file,
+% \DescribeEnv{qbsolutionorgrid}
+% including within the \textsf{questionbank} environment, if necessary.
+%
+%\subsection{Customization Macros}
+%
+% The \textsf{exam} document class provides the means for customizing headers,
+% footers, special pages, etc. As an exam author makes changes to a document
+% between exams, courses, or academic terms, the author may require frequent
+% adjustment of certain standard content, such as the name of the exam or course
+% in a custom header. The \textsf{examz} document class offers several macros to
+% simplify such changes. For example, instead of explicitly including the text
+% ``MATH 101'' in a header, an author can use the macro \cs{coursename} which
+% can be set (and easily modified) at the beginning of the document. This is
+% especially useful when designing for many similar courses a custom
+% \textsf{.cls} file that loads the \textsf{examz} class and keeps the layout
+% and customizations ``behind the scenes''. We first list and describe these
+% macros and then provide an example of usage.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\instructorname}
+% The default replacement text for \cs{instructorname} is ``Instructor Name''.
+%
+% \noindent
+% \DescribeMacro{\setinstructorname}
+% Use the command \cs{setinstructorname}\marg{text} to change this text.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\coursename}
+% The default replacement text for \cs{coursename} is ``Course Name''.
+%
+% \noindent
+% \DescribeMacro{\setcoursename}
+% Use the command \cs{setcoursename}\marg{text} to change this text.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\examname}
+% The default replacement text for \cs{examname} is ``Exam Name''.
+%
+% \noindent
+% \DescribeMacro{\setexamname}
+% Use the command \cs{setexamname}\marg{text} to change this text.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\termname}
+% The default replacement text for \cs{termname} is ``Term Name''.
+%
+% \noindent
+% \DescribeMacro{\settermname}
+% Use the command \cs{settermname}\marg{text} to change this text.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\namespace}
+% The default expansion of \cs{namespace} is
+% ``Name:~\makebox[5cm]{\hrulefill}'' which is given by the code
+% \texttt{Name:$\sim$\cs{makebox}[5cm]\{\cs{hrulefill}\}}.
+%
+% \noindent
+% \DescribeMacro{\setnamespace}
+% Use the command \cs{setnamespace}\marg{format} to change this format.
+%
+% \medskip
+% \noindent
+%\DescribeMacro{\instructions}
+% The default replacement text for \cs{instructions} is ``Instructions Here''.
+%
+% \noindent
+% \DescribeMacro{\setinstructions}
+% Use the command \cs{setinstructions}\marg{text} to change this text, including
+% one or more paragraphs as needed.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\covernoanswers}
+% The command \cs{covernoanswers} can be used within the \textsf{coverpages}
+% environment provided by the \textsf{exam} class or simply as the first page(s)
+% of the exam. Its default expansion is empty.
+% \DescribeMacro{\setcovernoanswers}
+% Use the command \cs{setcovernoanswers}\marg{format} to change this format to
+% include special headers and footers, instructions, grade/point tables, an
+% instance of \cs{newpage}, etc.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\coveranswers}
+% The command \cs{coveranswers} can be used within the \textsf{coverpages}
+% environment provided by the \textsf{exam} class or simply as the first page(s)
+% of the exam. Its default expansion is \cs{covernoanswers}.
+% \DescribeMacro{\setcoveranswers}
+% Use the command \cs{setcoveranswers}\marg{format} to change this format to
+% include special headers and footers, instructions, grade/point tables, an
+% instance of \cs{newpage}, etc.
+%
+% \medskip
+% \noindent
+% \DescribeMacro{\printcover}%
+% The command \cs{printcover} executes either \cs{coveranswers} or
+% \cs{covernoanswers}, depending on the value of the boolean
+% \textsf{printanswers}. It can be used within the \textsf{coverpages}
+% environment that is provided by the \textsf{exam} class or simply as the first
+% page(s) of the exam.
+%
+% \medskip
+% \noindent
+%\DescribeMacro{\workspace}
+% The command \cs{workspace} is intended to provide additional work space on the
+% exam, perhaps at the end of the questions. Its default expansion is empty. Use
+% the command \cs{setworkspace}\marg{format} to add a bit of text, \cs{newpage},
+% \DescribeMacro{\setworkspace}
+% or a custom header/footer. To include the content of \cs{workspace} only when
+% the boolean \textsf{printanswers} is FALSE, use the command
+% \DescribeMacro{\printworkspace}
+% \cs{printworkspace}.
+%
+% \medskip
+% One method of streamlining the work of developing many exams that use the same
+% layout and format is to write a simple \textsf{.cls} file to use as a custom
+% instantiation of the \textsf{examz} document class, perhaps even including
+% frequently used packages:
+%
+%\begin{verbatim}
+%\NeedsTeXFormat{LaTeX2e}
+%\ProvidesClass{MYexamz}
+%\DeclareOption*{\PassOptionsToClass{\CurrentOption}{examz}}
+%\ProcessOptions\relax
+%\LoadClass{examz}
+%\RequirePackage{mathtools,amssymb}
+%\pagestyle{headandfoot}
+%\header{\coursename}{\examname}{termname}
+%\setcovernoanswers{%
+%   \namespace
+%   
+%   \bigskip
+%   \instructions
+%   
+%   \bigskip
+%   \gradetable
+%   
+%   \firstpagefooter{Version \arabic{version}}{}{}
+%   \newpage
+%}%
+%\setworkspace{%
+%   \newpage
+%   \begin{center} Extra Work Space \end{center}
+%   \newpage
+%}%
+%\endinput
+%\end{verbatim}
+%
+% \noindent
+% Then use the custom document class \textsf{MYexamz} for the exam: 
+%
+%\begin{verbatim}
+%\documentclass[addpoints,prompt,complete]{MYexamz}
+%
+%\setcoursename{MATH 101}
+%\setexamname{Test 1}
+%\settermname{Spring 2023}
+%\setinstructions{%
+%   Read each problem carefully. Show all work.
+%}%
+%
+%\begin{document}
+%\begin{versions}
+%   \printcover
+%   \setquestionpath{Problems/}
+%\begin{questions}
+%   \questionfrombank{Solve_Linear_Equation}
+%   \questionfrombank{State_Capitals}
+%\end{questions}
+%   \printworkspace
+%\end{versions}
+%\end{document}
+%\end{verbatim}
+%
+% To write a new exam Test 2 in the same course, simply change the argument of
+% \cs{setexamname} from \texttt{Test 1} to \texttt{Test 2} and use the
+% appropriate question banks. With random counters and well-developed question
+% banks, writing exams for the next term may be as simple as changing the
+% term name.
+%
+%\StopEventually{^^A
+%  \PrintChanges
+%  \PrintIndex
+%}
+%
+%\section{Implementation}\label{imp}
+%
+% The \textsf{examz} document class requires the packages \textsf{environ}, \textsf{xpatch}, and \textsf{counterz}, the last of which also loads the
+% packages \textsf{etoolbox} and \textsf{makecmds}.
+%
+%    \begin{macrocode}
+\RequirePackage{environ}
+\RequirePackage{xpatch}
+\RequirePackage{counterz}
+%    \end{macrocode}
+%
+% This class inherits all of the options available to the \textsf{exam} class,
+% including \textsf{answers}, \textsf{noanswers}, \textsf{cancelspace},
+% \textsf{nocancelspace}, and \textsf{addpoints}. The class also admits
+% several additional options, the first of which is called \textsf{complete}.
+% This option takes effect only when using the \textsf{versions} environment
+% (see Section \ref{imp:versions}) and will otherwise be ignored. With this
+% option selected, the document alternately prints each exam version with and
+% without its solutions. The default value of the associated boolean variable
+% is FALSE. Loading the option \textsf{complete} will change this value to TRUE.
+% This option is intended to take the place of the options \textsf{answers} and
+% \textsf{noanswers} and will override these two options if engaged.
+%
+%    \begin{macrocode}
+\newbool{@examz@complete}
+\boolfalse{@examz@complete}
+\DeclareOption{complete}{\booltrue{@examz@complete}}
+%    \end{macrocode}
+%
+% Additional options are based on features of the \textsf{counterz} package. The
+% option \textsf{randomize} will cause the command \cs{randprovidecounter} (and
+% its derivative commands) to generate new random values whereas the option
+% \textsf{norandomize} will cause these commands to input their values from a
+% file. Because this file may not exist before a first typesetting, the default
+% option is \textsf{randomize}.
+%
+%    \begin{macrocode}
+\randomizectr
+\DeclareOption{randomize}{\randomizectr}
+\DeclareOption{norandomize}{\norandomizectr}
+%    \end{macrocode}
+%
+%
+% Finally, the class may be loaded with an option called \textsf{prompt}.
+% Because the manual change of the option \textsf{randomize} may be forgotten,
+% resulting in the loss of counter values, the option \textsf{prompt} offers a
+% terminal-based dialogue through which randomization can be decided. This
+% action, which is executed at the beginning of the document (see below) is
+% based on the command \cs{promptranomizectr} from the \textsf{counterz}
+% package.
+%
+%    \begin{macrocode}
+\newbool{@examz@prompt}
+\boolfalse{@examz@prompt}
+\DeclareOption{prompt}{\booltrue{@examz@prompt}}
+\newcommand{\promptrandomexam}{%
+   \promptrandomizectr[\EnterResponse]{%
+      ^^J Enter 1 to randomize document.
+      ^^J Enter 2 to update without new randomization.
+   }{%
+      1%
+   }%
+}%
+%    \end{macrocode}
+%
+% We now load the \textsf{exam} document class with all of these options.
+%
+%    \begin{macrocode}
+\DeclareOption*{%
+   \PassOptionsToClass{\CurrentOption}{exam}
+}%
+\ProcessOptions\relax
+\LoadClass{exam}
+%    \end{macrocode}
+%
+% Next, we patch the \textsf{coverpages} environment. If the document is loaded
+% with the option \textsf{twoside} (passed from the \textsf{article} class) and
+% the \textsf{coverpages} environment produces an odd number of pages, then an
+% extra blank page is inserted so that the odd arabic page numerals appear on
+% the right page (i.e. front of the page).
+%
+%    \begin{macrocode}
+\xpatchcmd{\endcoverpages}{\setcounter{num@coverpages}{\value{page}}}{%
+   \ifbool{@twoside}{%
+      \ifnumodd{\value{page}}{%
+         % Do Nothing
+      }{%
+         \newpage
+         \null
+         \newpage
+      }%
+   }{%
+      % Do nothing
+   }%
+   \setcounter{num@coverpages}{\value{page}}%
+}{}{}%
+%    \end{macrocode}
+% If the class is loaded with the option \textsf{prompt} then we execute the
+% command \cs{promptrandomexam}. If the user elects to not randomize the
+% document, either by terminal input via \cs{promptrandomexam} or by instead
+% loading the \textsf{norandomize} option, then we execute the command
+% \cs{inputcountersfile}. (Note that this will produce an error if no counters
+% file exists, so this option should not be used for a first typesetting.) If
+% the user does elect to randomize the document, by terminal input or by loading
+% the class with the option \textsf{randomize} or by loading the class with none
+% of the options \textsf{randomize}, \textsf{norandomize}, or \textsf{prompt},
+% then we execute the command \cs{opencountersfile}.
+%
+%    \begin{macrocode}
+\AtBeginDocument{%
+   \ifbool{@examz@prompt}{%
+      \promptrandomexam
+   }{%
+   }%
+   \ifrandomizectr{%
+      \opencountersfile
+   }{%
+      \inputcountersfile
+   }%
+}%
+%    \end{macrocode}
+%
+%\subsection{Randomized Exams}\label{imp:versions}
+%
+% The counter \textit{numversions} determines how many versions of the exam will
+% be generated. The default value of \textit{numversions} is 1.
+%
+%    \begin{macrocode}
+\newcounter{numversions}
+\setcounter{numversions}{1}
+%    \end{macrocode}
+%
+%\begin{macro}{\promptversions}
+%
+% The following command is used by the \textsf{versions} environment (described
+% below) whenever the class is loaded with the \textsf{prompt} option. Note that
+% the counter is saved to the counters file. (See the documentation for the
+% \textsf{counterz} package.)
+%
+%    \begin{macrocode}
+\newcommand{\promptversions}{%
+   \typein[\NumberOfVersions]{%
+      ^^J How many versions?
+   }%
+   \setcounter{numversions}{\NumberOfVersions}
+   \savecounter{numversions}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+% The counter \textit{version} keeps track of the exam version when printing.
+% The value of \textit{version} is initialized as 1.
+%
+%    \begin{macrocode}
+\newcounter{version}
+\setcounter{version}{1}
+%    \end{macrocode}
+%
+% We now patch the parent class \textsf{exam} so that corresponding questions in
+% different versions will not be assigned the same question label. To accomplish
+% this, we append to the question labels the value of \textit{version}. We also
+% append an \textit{S} if the boolean \textit{answers} (from the \textsf{exam}
+% class) is TRUE, to distinguish between versions with and without solutions
+% when the class is loaded with the option \textsf{complete}.
+%
+%    \begin{macrocode}
+\xpatchcmd{\find@latestques}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\decr@latest@ques}
+   {question@}
+   {question@\arabic{version}\ifbool{printanswers}{S}{}@}
+   {}{}
+\xpatchcmd{\chk@incompi}
+   {question@}
+   {question@\arabic{version}\ifbool{printanswers}{S}{}@}
+   {}{}
+\xpatchcmd{\questions}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\parts}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\subparts}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\subsubparts}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\setup@point@toks}
+   {@\arabic{question}}
+   {@\arabic{version}\ifbool{printanswers}{S}{}@\arabic{question}}
+   {}{}
+\xpatchcmd{\refto@index}
+   {question@}
+   {question@\arabic{version}\ifbool{printanswers}{S}{}@}
+   {}{}
+%    \end{macrocode}
+%
+%\begin{macro}{\@examz@versions}
+%
+% The \textsf{versions} environment is defined via command \cs{@examz@versions}.
+% The single argument of this command represents the user-provided exam content,
+% including the \textsf{questions} environment and any pages before or after. If
+% the class is loaded with the option \textsf{prompt} and the exam is randomized
+% then the command first executes \cs{promptversions} to attain and save the
+% value of the counter \textit{numversions}. The main action of the command is
+% to use a while loop to generate versions of the exam, updating the version
+% and page numbers along the way. When the class is loaded with the option
+% \textsf{complete}, the document alternately prints without and with solutions,
+% updating the version only after both printings. When the class is loaded with
+% the option \textsf{twoside}, an extra blank page is inserted at the end of
+% each version when necessary to ensure that the next version starts on a front
+% page.
+%
+%    \begin{macrocode}
+\newcommand{\@examz@versions}[1]{%
+   \ifrandomizectr{%
+      \ifbool{@examz@prompt}{%
+         \promptversions
+      }{%
+         % Do Nothing
+      }%
+   }{%
+      % Do Nothing
+   }%
+   \ifbool{@examz@complete}{%
+      \noprintanswers
+   }{%
+      % Do Nothing
+   }%
+   \whileboolexpr{%
+      test{\ifnumless{\value{version}}{1+\value{numversions}}}
+   }{%
+      \ifbool{@twoside}{%
+         \ifnumodd{\value{page}}{%
+            % Do Nothing
+         }{%
+            \newpage
+            \null
+            \thispagestyle{empty}
+            \newpage
+         }%
+      }{%
+         % Do Nothing
+      }%
+      \setcounter{page}{1}
+      \setcounter{numquestions}{0}
+      \setcounter{numparts}{0}
+      \setcounter{numsubparts}{0}
+      \setcounter{numsubsubparts}{0}
+      \setcounter{numpoints}{0}
+      \setcounter{numbonuspoints}{0}
+      #1
+      \newpage
+      \notbool{@examz@complete}{%
+         \addtocounter{version}{1}
+      }{%
+         \notbool{printanswers}{%
+            \printanswers
+         }{%
+            \noprintanswers
+            \addtocounter{version}{1}
+         }%
+      }%
+   }%
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+%\begin{environment}{versions}
+%
+% The \textsf{versions} environment is now defined using the previous command
+% and the command \cs{Collect@Body}. The environment has an optional argument
+% with which the user may specify the number of versions.  If the exam is not
+% randomized then the argument is ignored under the assumption that the needed
+% value has been inputted from the counters file after a previous randomization.
+% (If there is never any randomization, then there is no need for different
+% versions, and the environment will execute with the default number of versions
+% being one.) If the class is loaded with the option \textsf{prompt}, then this
+% optional argument will be overridden by the number provided by the user via
+% terminal prompt.
+%
+%    \begin{macrocode}
+\newenvironment{versions}[1][1]{%
+   \ifrandomizectr{%
+      \setcounter{numversions}{#1}
+      \savecounter{numversions}
+   }{%
+      % Do Nothing
+   }%
+   \Collect@Body\@examz@versions
+}{%
+   % Empty
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+% The \textsf{exam} document class exam prints in the console and log file some
+% data that includes the number of questions, total points, etc. Here we add to
+% that data the number of versions of the exam and whether the solutions were
+% printed.
+%
+%    \begin{macrocode}
+\AtEndDocument{%
+   \typeout{%
+      This document contains \thenumversions\space
+      version\ifnumequal{\value{numversions}}{1}{}{s} of the exam
+      \ifbool{@examz@complete}{%
+         with and without solutions.
+      }{%
+         \ifbool{printanswers}{%
+            with solutions.
+         }{%
+            without solutions.
+         }%
+      }%
+   }%
+}%
+%    \end{macrocode}
+%
+%\subsection{Question Banks}\label{imp:banks}
+%
+%\begin{macro}{\@examz@questionpath}
+%\begin{macro}{\setquestionpath}
+% The default value of \cs{@examz@questionpath} is empty, but authors may use
+% the command \cs{setquestionpath}\marg{pathname} to change this.
+%
+%    \begin{macrocode}
+\newcommand{\@examz@questionpath}{}
+\newcommand{\setquestionpath}[1]{%
+   \renewcommand{\@examz@questionpath}{#1}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%\end{macro}
+%
+%\begin{macro}{\questionfrombank}
+% The command \cs{questionfrombank}\oarg{points}\marg{filename} uses the
+% command \cs{question} from the \textsf{exam} class. The first (optional)
+% argument is the point value of the question, and the second argument is the
+% name of the question bank file (without the .tex extension). The input uses
+% \cs{\@examz@questionpath}. In order to avoid a conflict between question banks
+% that use the same counter names, \cs{counterprefix} is temporarily set to
+% include both the name of the file and the number of the version. (See the
+% \textsf{counterz} package for more information about \cs{setcounterprefix}.)
+%
+%    \begin{macrocode}
+\newcommand{\questionfrombank}[2][]{%
+   \question[#1]
+   \setcounterprefix{#2_Version_\arabic{version}_}
+   \input{\@examz@questionpath #2}
+   \clearcounterprefix
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+%\begin{macro}{\setnumberofquestions}
+%
+% The counter \textit{@examz@qbsize} is an internal counter to represent the
+% number of questions in a question bank. The command
+% \cs{setnumberofquestions}\marg{number} is used to set this value.
+%
+%    \begin{macrocode}
+\newcounter{@examz@qbsize}
+\newcommand{\setnumberofquestions}[1]{%
+   \setcounter{@examz@qbsize}{#1}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+%\begin{environment}{questionbank}
+%
+% The \textsf{questionbank} environment begins by creating a random counter that
+% is used to determine which question will be selected and ends with the command
+% \cs{endinput} so that nothing after the environment appears in the question.
+%    \begin{macrocode}
+\newenvironment{questionbank}{%
+   \xrandprovidecounter{Random_Question}{1}{\value{@examz@qbsize}}
+}{%
+   \endinput
+}
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbitem}
+%
+% The environment \textsf{qbitem} is a wrapper for each option in a
+% \textsf{questionbank} environment. The argument is an integer value that is
+% compared to the random counter value generated by \textsf{questionbank}. The
+% body of the environment is the content of the question. Additional counters
+% that are created and manipulated within \textsf{qbitem} should be handled by
+% the commands provided in the \textsf{counterz} package in order to use the
+% counter prefix that is created by the command \cs{questionfrombank}.
+%
+%    \begin{macrocode}
+\NewEnviron{qbitem}[1]{%
+	\ifnumequal{\xvalue{Random_Question}}{#1}{%
+		\BODY
+	}{%
+	}
+}
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{macro}{\setsolutionspace}
+%
+% The command \cs{@examz@solutionspace} represents the amount of space allotted
+% to solutions, per the various solutions environments that are defined by the
+% \textsf{exam} document class. \cs{setsolutionspace}\marg{length} is used to
+% set this value.
+%
+%    \begin{macrocode}
+\newcommand{\@examz@solutionspace}{1cm}
+\newcommand{\setsolutionspace}[1]{%
+   \renewcommand{\@examz@solutionspace}{#1}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+% \noindent
+% For each of the six solutions environments provided by the \textsf{exam} class
+% there is an analogous solutions environment that automatically loads the value
+% of \cs{SolutionSpace} for the argument.
+%
+%\begin{environment}{qbsolution}
+%
+% \textsf{qbsolution} is equivalent to
+% \textsf{solution}[\cs{@examz@solutionspace}].
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolution}{%
+   \begin{solution}[\@examz@solutionspace]
+      \BODY
+   \end{solution}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbsolutionbox}
+%
+% \textsf{qbsolutionbox} is equivalent to
+% \textsf{solutionbox}\{\cs{@examz@solutionspace}\}.
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolutionbox}{%
+	\begin{solutionbox}{\@examz@solutionspace}
+		\BODY
+	\end{solutionbox}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbsolutionorbox}
+%
+% \textsf{qbsolutionorbox} is equivalent to
+% \textsf{solutionorbox}[\cs{@examz@solutionspace}].
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolutionorbox}{%
+	\begin{solutionorbox}[\@examz@solutionspace]
+		\BODY
+	\end{solutionorbox}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbsolutionorlines}
+%
+% \textsf{qbsolutionorlines} is equivalent to
+% \textsf{solutionorlines}[\cs{@examz@solutionspace}].
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolutionorlines}{%
+	\begin{solutionorlines}[\@examz@solutionspace]
+		\BODY
+	\end{solutionorlines}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbsolutionordottedlines}
+%
+% \textsf{qbsolutionordottedlines} is equal to
+% \textsf{solutionordottedlines}[\cs{@examz@solutionspace}].
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolutionordottedlines}{%
+	\begin{solutionordottedlines}[\@examz@solutionspace]
+		\BODY
+	\end{solutionordottedlines}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\begin{environment}{qbsolutionorgrid}
+%
+% \textsf{qbsolutionorgrid} is equivalent to
+% \textsf{solutionorgrid}[\cs{@examz@solutionspace}].
+%
+%    \begin{macrocode}
+\NewEnviron{qbsolutionorgrid}{%
+	\begin{solutionorgrid}[\@examz@solutionspace]
+		\BODY
+	\end{solutionorgrid}
+}%
+%    \end{macrocode}
+%
+%\end{environment}
+%
+%\subsection{Customization Macros}
+%
+%\begin{macro}{\instructorname}
+%\begin{macro}{\coursename}
+%\begin{macro}{\examname}
+%\begin{macro}{\termname}
+%\begin{macro}{\namespace}
+%\begin{macro}{\instructions}
+%\begin{macro}{\covernoanswers}
+%\begin{macro}{\coveranswers}
+%\begin{macro}{\workspace}
+%
+% The following commands define macros, with default values, for use in
+% formatting headers, footers, and special pages. \cs{covernoanswers} and
+% \cs{workspace} are empty by default, and \cs{coveranswers} is equal to
+% \cs{covernoanswers} by default.
+%
+%    \begin{macrocode}
+\newcommand{\instructorname}{Instructor Name}
+\newcommand{\coursename}{Course Name}
+\newcommand{\examname}{Exam Name}
+\newcommand{\termname}{Term Name}
+\newcommand{\namespace}{Name:~\makebox[5cm]{\hrulefill}}
+\newcommand{\instructions}{Instructions Here}
+\newcommand{\covernoanswers}{}
+\newcommand{\coveranswers}{\covernoanswers}
+\newcommand{\workspace}{}
+%    \end{macrocode}
+%
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%
+%\begin{macro}{\setinstructorname}
+%\begin{macro}{\setcoursename}
+%\begin{macro}{\setexamname}
+%\begin{macro}{\settermname}
+%\begin{macro}{\setnamespace}
+%\begin{macro}{\setinstructions}
+%\begin{macro}{\setcoveranswers}
+%\begin{macro}{\setcovernoanswers}
+%\begin{macro}{\setworkspace}
+%
+% The following commands allow a user to redefine the above macros.
+%    \begin{macrocode}
+\newcommand{\setinstructorname}[1]{\renewcommand{\instructorname}{#1}}
+\newcommand{\setcoursename}[1]{\renewcommand{\coursename}{#1}}
+\newcommand{\setexamname}[1]{\renewcommand{\examname}{#1}}
+\newcommand{\settermname}[1]{\renewcommand{\termname}{#1}}
+\newcommand{\setnamespace}[1]{\renewcommand{\namespace}{#1}}
+\newcommand{\setinstructions}[1]{\renewcommand{\instructions}{#1}}
+\newcommand{\setcovernoanswers}[1]{\renewcommand{\covernoanswers}{#1}}
+\newcommand{\setcoveranswers}[1]{\renewcommand{\coveranswers}{#1}}
+\newcommand{\setworkspace}[1]{\renewcommand{\workspace}{#1}}
+%    \end{macrocode}
+%
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%\end{macro}
+%
+%\begin{macro}{\printcover}
+%
+% The command \cs{printcover} executes either \cs{coveranswers} or
+% \cs{covernoanswers}, depending on the value of the boolean
+% \textsf{printanswers}.
+%
+%    \begin{macrocode}
+\newcommand{\printcover}{%
+   \ifbool{printanswers}{\coveranswers}{\covernoanswers}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+%\begin{macro}{\printworkspace}
+%
+% The command \cs{printcover} executes \cs{workspace} when the boolean
+% \textsf{printanswers} is false and otherwise does nothing.
+%
+%    \begin{macrocode}
+\newcommand{\printworkspace}{%
+   \ifbool{printanswers}{}{\workspace}
+}%
+%    \end{macrocode}
+%
+%\end{macro}
+%
+% \Finale
+\endinput
