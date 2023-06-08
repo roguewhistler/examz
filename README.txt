@@ -1,7 +1,8 @@
 To demo this document class, simply download one or both of the
 provided zip files, extract them, and follow the directions in
 the README files. Both zip files contain copies of the files
-counterz.sty and examz.cls, so you only need a TeX installation.
+counterz.sty and examz.cls, so you only need a standard TeX
+installation (and Sage for the example that uses Sage).
 
 ----------------------------------------------------------------------
 `examz' --- 2023/06/07 Version 1.0.0
